@@ -1,6 +1,5 @@
 var http = require('http');
-var stuff = [0,1,2,3,4,5,6,7,8]
-var body = {};
+var stuff = [1,2,3,4,5,6,7,8,9]
 const PORT=8888;
 function handleRequest(request, response){
   response.setHeader('Access-Control-Allow-Origin', '*');
@@ -12,12 +11,14 @@ console.log(request.method);
 	if ( request.method === 'POST' ) {
 
     request.on('data', function(chunk) {
-      body.push(chunk.toString());
-      console.log(chunk.toString());
+      chunk = chunk.toString()
+      console.log(chunk);
+      var pos = chunk.charAt(0)
+      console.log(pos);
+      stuff[pos] = "X"
     }).on('end', function() {
-        // console.log(body);
         response.writeHead(200);
-        response.write(JSON.stringify(body))
+        response.write(stuff)
         response.end()
     }).on('error', function(err){
       console.log(err);
