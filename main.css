@@ -1,4 +1,4 @@
-p{
+.box{
   height: 200px;
   width: 200px;
   background-color: #ffff99;
@@ -6,8 +6,10 @@ p{
   margin: 10px 10px;
   text-align: center;
   font-size: 50px;
+  padding: 50px;
 }
 
-.box{
-  padding: 50px;
+.WinnerMes{
+  font-size: 60px;
+  font-weight: bold;
 }

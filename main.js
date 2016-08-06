@@ -13,18 +13,21 @@ console.log(request.method);
 	if ( request.method === 'POST' ) {
     request.on('data', function(chunk) {
       console.log(chunk.toString());
-      var playerAndChoice = JSON.parse(chunk.toString())
-      var user = Object.keys(playerAndChoice)[0]
-      if(user == 'player1'){
-        var posX = playerAndChoice[user]
-        stuff.things[posX-1] = "X"
-      }else if(user == 'player2'){
-        var posO = playerAndChoice[user]
-        console.log(posO);
-        stuff.things[posO-1] = "O"
+      if(chunk.toString() == 'player1' || chunk.toString() == 'player2'){
+        stuff = chunk.toString()
+      }else{
+        var playerAndChoice = JSON.parse(chunk.toString())
+        var user = Object.keys(playerAndChoice)[0]
+
+        if(user == 'player1'){
+          var posX = playerAndChoice[user]
+          stuff.things[posX-1] = "X"
+        }else if(user == 'player2'){
+          var posO = playerAndChoice[user]
+          stuff.things[posO-1] = "O"
+        }
       }
     }).on('end', function() {
-        // console.log(body);
         response.writeHead(200);
         response.write(JSON.stringify(stuff))
         response.end()

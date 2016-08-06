@@ -47,7 +47,20 @@ testForWinner()
         changes['change' + (i+1)] = gameState[i]
         $('.change' + (i+1)).html(gameState[i])
       }
-      testForWinner()
+
+      if(testForWinner() != false){
+        var winner = testForWinner()
+        console.log(winner);
+        $.ajax({
+          method: 'POST',
+          url: "http://localhost:8888",
+          data: winner
+        }).done(function(winMesg){
+          $('body').append(`<p class='WinnerMes'> ${winMesg} Wins</p>`)
+        }).fail(function(err){
+          console.log(err);
+        })
+      }
     }).fail(function(err){
       console.log(err);
     })
@@ -58,52 +71,69 @@ function testForWinner(){
   if(changes.change1 == changes.change2 && changes.change2 == changes.change3){
     if(changes.change1 == 'X'){
       console.log('player 1 wins');
+      return 'player1'
     }else{
       console.log('player 2 wins');
+      return 'player2'
     }
   }else if(changes.change4 == changes.change5 && changes.change5 == changes.change6){
     if(changes.change4 == 'X'){
       console.log('player 1 wins');
+      return 'player1'
     }else{
       console.log('player 2 wins');
+      return 'player2'
     }
   }else if(changes.change7 == changes.change8 && changes.change8 == changes.change9){
     if(changes.change7 == 'X'){
       console.log('player 1 wins');
+      return 'player1'
     }else{
       console.log('player 2 wins');
+      return 'player2'
     }
   }else if(changes.change1 == changes.change4 && changes.change4 == changes.change7){
     if(changes.change1 == 'X'){
       console.log('player 1 wins');
+      return 'player1'
     }else{
       console.log('player 2 wins');
+      return 'player2'
     }
   }else if(changes.change2 == changes.change5 && changes.change5 == changes.change8){
     if(changes.change2 == 'X'){
       console.log('player 1 wins');
+      return 'player1'
     }else{
       console.log('player 2 wins');
+      return 'player2'
     }
   }else if(changes.change3 == changes.change6 && changes.change6 == changes.change9){
     if(changes.change3 == 'X'){
       console.log('player 1 wins');
+      return 'player1'
     }else{
       console.log('player 2 wins');
+      return 'player2'
     }
   }else if(changes.change1 == changes.change5 && changes.change5 == changes.change9){
     if(changes.change1 == 'X'){
       console.log('player 1 wins');
+      return 'player1'
     }else{
       console.log('player 2 wins');
+      return 'player2'
     }
   }else if(changes.change3 == changes.change5 && changes.change5 == changes.change7){
     if(changes.change4 == 'X'){
       console.log('player 1 wins');
+      return 'player1'
     }else{
       console.log('player 2 wins');
+      return 'player2'
     }
   }
+  return false;
 }
 
 
