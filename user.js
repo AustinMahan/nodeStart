@@ -6,7 +6,7 @@ var gameState = []
 //immediatly grabs and updates using what is on the server
 $.ajax({
   method: "GET",
-  url: "http://localhost:8888"
+  url: "https://localhost:8888"
 }).done(function(data){
   gameState = JSON.parse(data).things
   for(var i = 0; i < 9; i++){
@@ -39,7 +39,7 @@ testForWinner()
 
     $.ajax({
       method: "POST",
-      url: "http://localhost:8888",
+      url: "https://localhost:8888",
       data: JSON.stringify(sendData)
     }).done(function(data){
       gameState = JSON.parse(data).things
@@ -53,7 +53,7 @@ testForWinner()
         console.log(winner);
         $.ajax({
           method: 'POST',
-          url: "http://localhost:8888",
+          url: "https://localhost:8888",
           data: winner
         }).done(function(winMesg){
           $('body').append(`<p class='WinnerMes'> ${winMesg} Wins</p>`)
