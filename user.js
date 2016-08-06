@@ -8,12 +8,18 @@ $.ajax({
   method: "GET",
   url: "http://localhost:8888"
 }).done(function(data){
-  gameState = JSON.parse(data).things
-  for(var i = 0; i < 9; i++){
-    changes['change' + (i+1)] = gameState[i]
-    $('.change' + (i+1)).html(gameState[i])
+  console.log(data);
+  if(data.length == 9){
+    console.log('Its a string');
+    $('body').append(`<p class='WinnerMes'> ${data} Wins</p>`)
+  }else{
+    gameState = JSON.parse(data).things
+    for(var i = 0; i < 9; i++){
+      changes['change' + (i+1)] = gameState[i]
+      $('.change' + (i+1)).html(gameState[i])
+    }
+    testForWinner()
   }
-testForWinner()
 }).fail(function(err){
   console.log(err);
 })
@@ -27,6 +33,7 @@ testForWinner()
     console.log($(this).attr('name'));
     player = $(this).attr('name')
   })
+
 //if one of the letters is clicked then it will replace that letter on the server and on the page
   $('p').click(function(){
     if(player == ''){
