@@ -1,5 +1,6 @@
 var http = require('http');
-var stuff = [1,2,3,4,5,6,7,8,9]
+var stuff = {'things':[1,2,3,4,5,6,7,8,9]}
+var body = {};
 const PORT=8888;
 function handleRequest(request, response){
   response.setHeader('Access-Control-Allow-Origin', '*');
@@ -8,17 +9,24 @@ function handleRequest(request, response){
 	response.setHeader('Access-Control-Allow-Headers', '*');
 
 console.log(request.method);
-	if ( request.method === 'POST' ) {
 
+	if ( request.method === 'POST' ) {
     request.on('data', function(chunk) {
-      chunk = chunk.toString()
-      console.log(chunk);
-      var pos = chunk.charAt(0)
-      console.log(pos);
-      stuff[pos] = "X"
+      console.log(chunk.toString());
+      var playerAndChoice = JSON.parse(chunk.toString())
+      var user = Object.keys(playerAndChoice)[0]
+      if(user == 'player1'){
+        var posX = playerAndChoice[user]
+        stuff.things[posX-1] = "X"
+      }else if(user == 'player2'){
+        var posO = playerAndChoice[user]
+        console.log(posO);
+        stuff.things[posO-1] = "O"
+      }
     }).on('end', function() {
+        // console.log(body);
         response.writeHead(200);
-        response.write(stuff)
+        response.write(JSON.stringify(stuff))
         response.end()
     }).on('error', function(err){
       console.log(err);
@@ -26,7 +34,7 @@ console.log(request.method);
       response.end()
     })
 	}else{
-    response.write(JSON.stringify(body))
+    response.write(JSON.stringify(stuff))
     response.end()
   }
 
@@ -46,10 +54,3 @@ var server = http.createServer(handleRequest);
 server.listen(PORT, function(){
   console.log("Server listening on: http://localhost:%s", PORT);
 });
-
-
-//main.js
-//
-
-//index.html
-/// prevent default then make ajax call to the server to get the data back

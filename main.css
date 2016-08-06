@@ -1,0 +1,13 @@
+p{
+  height: 200px;
+  width: 200px;
+  background-color: #ffff99;
+  float: left;
+  margin: 10px 10px;
+  text-align: center;
+  font-size: 50px;
+}
+
+.box{
+  padding: 50px;
+}

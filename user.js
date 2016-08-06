@@ -1,38 +1,110 @@
 $(document).ready(function(){
-console.log('test');
-  // $('form').submit(function(e){
-  //   e.preventDefault()
-  //   $.ajax({
-  //     method: "POST",
-  //     url: "http://localhost:8888",
-  //     data: $('.testWords').val()
-  //   }).done(function(data){
-  //     console.log(data);
-  //   }).fail(function(err){
-  //     console.log(err);
-  //   })
-  // })
+var changes = {}
+var gameState = []
 
+
+//immediatly grabs and updates using what is on the server
+$.ajax({
+  method: "GET",
+  url: "http://localhost:8888"
+}).done(function(data){
+  gameState = JSON.parse(data).things
+  for(var i = 0; i < 9; i++){
+    changes['change' + (i+1)] = gameState[i]
+    $('.change' + (i+1)).html(gameState[i])
+  }
+testForWinner()
+}).fail(function(err){
+  console.log(err);
+})
+
+
+
+
+//makes sure a player is selected
+  var player = ''
+  $('.player').click(function(){
+    console.log($(this).attr('name'));
+    player = $(this).attr('name')
+  })
+//if one of the letters is clicked then it will replace that letter on the server and on the page
   $('p').click(function(){
-    console.log(parseInt($(this).text()));
+    if(player == ''){
+      console.log('Select Player');
+      return
+    }
+    var num = $(this).text()
+    var sendData = {}
+    sendData[player] = num
+
     $.ajax({
       method: "POST",
       url: "http://localhost:8888",
-      data: {0:'X'}
+      data: JSON.stringify(sendData)
     }).done(function(data){
-      data = data.split(',')
-      data[0] = data[0].charAt(2)
-      data[8] = data[8].charAt(0)
+      gameState = JSON.parse(data).things
       for(var i = 0; i < 9; i++){
-        $('.change' + (i+1)).html(data[i])
+        changes['change' + (i+1)] = gameState[i]
+        $('.change' + (i+1)).html(gameState[i])
       }
-      console.log(data);
-
-      console.log(data[1]);
+      testForWinner()
     }).fail(function(err){
       console.log(err);
     })
   })
+
+// looks if any player has 3 in a row
+function testForWinner(){
+  if(changes.change1 == changes.change2 && changes.change2 == changes.change3){
+    if(changes.change1 == 'X'){
+      console.log('player 1 wins');
+    }else{
+      console.log('player 2 wins');
+    }
+  }else if(changes.change4 == changes.change5 && changes.change5 == changes.change6){
+    if(changes.change4 == 'X'){
+      console.log('player 1 wins');
+    }else{
+      console.log('player 2 wins');
+    }
+  }else if(changes.change7 == changes.change8 && changes.change8 == changes.change9){
+    if(changes.change7 == 'X'){
+      console.log('player 1 wins');
+    }else{
+      console.log('player 2 wins');
+    }
+  }else if(changes.change1 == changes.change4 && changes.change4 == changes.change7){
+    if(changes.change1 == 'X'){
+      console.log('player 1 wins');
+    }else{
+      console.log('player 2 wins');
+    }
+  }else if(changes.change2 == changes.change5 && changes.change5 == changes.change8){
+    if(changes.change2 == 'X'){
+      console.log('player 1 wins');
+    }else{
+      console.log('player 2 wins');
+    }
+  }else if(changes.change3 == changes.change6 && changes.change6 == changes.change9){
+    if(changes.change3 == 'X'){
+      console.log('player 1 wins');
+    }else{
+      console.log('player 2 wins');
+    }
+  }else if(changes.change1 == changes.change5 && changes.change5 == changes.change9){
+    if(changes.change1 == 'X'){
+      console.log('player 1 wins');
+    }else{
+      console.log('player 2 wins');
+    }
+  }else if(changes.change3 == changes.change5 && changes.change5 == changes.change7){
+    if(changes.change4 == 'X'){
+      console.log('player 1 wins');
+    }else{
+      console.log('player 2 wins');
+    }
+  }
+}
 
 
 })
