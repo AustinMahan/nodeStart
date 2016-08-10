@@ -177,8 +177,8 @@ setInterval(function(){
 
     if(player.buttonRight && player.x < 1050){
       if(!((player.x > 200 && player.x < 500) && (player.y > 354 && player.y < 430))){
-        if(!((player.x > 594 && player.x < 890) && (player.y > 210 && player.y < 295))){
-          if(!((player.x > 794) && (player.y > 350 && player.y < 440))){
+        if(!((player.x > 600 && player.x < 906) && (player.y > 210 && player.y < 295))){
+          if(!((player.x > 794) && (player.y > 360 && player.y < 460))){
             player.x += 8
           }
         }
@@ -187,8 +187,8 @@ setInterval(function(){
 
     if(player.buttonUp && player.y > 12){
       if(!((player.y > 375 && player.y < 445) && (player.x > 200 && player.x < 500))){
-        if(!((player.x > 600 && player.x < 890) && (player.y > 210 && player.y < 295))){
-          if(!((player.x > 800) && (player.y > 350 && player.y < 440))){
+        if(!((player.x > 600 && player.x < 906) && (player.y > 210 && player.y < 295))){
+          if(!((player.x > 800) && (player.y > 360 && player.y < 460))){
             if(!((player.x < 175) && (player.y > 210 && player.y < 290))){
               player.y -= 18
             }

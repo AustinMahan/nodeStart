@@ -59,16 +59,6 @@ $(document).ready(function(){
           }
         }
       }
-      //looks at players health
-      // if(i == 0){
-      //   $('#p1Health').val(data[0].health)
-      // }else if(i == 1){
-      //   $('.player2Header').fadeIn(1)
-      //   $('#p2Health').val(data[1].health)
-      // }else if(i == 2){
-      //   $('.player3Header').fadeIn(1)
-      //   $('#p3Health').val(data[2].health)
-      // }
     }
   });
 
