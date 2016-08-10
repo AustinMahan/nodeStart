@@ -25,6 +25,8 @@ function Player(playerId){
     buttonUp: false,
     buttonDown: false,
     shooting: false,
+    shootRight: null,
+    shootLeft: null,
     health: 100,
 		x:400,
 		y:300,
@@ -79,13 +81,13 @@ io.sockets.on('connection', function(socket){
   //starts movement and shooting when key is down
   socket.on('goLeft', function(){
 		player.buttonLeft = true
-    shootLeft = true
-    shootRight = null
+    player.shootLeft = true
+    player.shootRight = null
 	})
   socket.on('goRight', function(){
 		player.buttonRight = true
-    shootLeft = null
-    shootRight = true
+    player.shootLeft = null
+    player.shootRight = true
 	})
   socket.on('jumpUp',function(){
   player.buttonUp = true
@@ -150,7 +152,7 @@ setInterval(function(){
     })
     //makes new bullets and gives directions when the user is making input
     if(player.shooting){
-      bullet = new bullets(player.x, player.y, shootLeft, shootRight)
+      bullet = new bullets(player.x, player.y, player.shootLeft, player.shootRight)
       player.bulletsOnScreen.push(bullet)
       // console.log(playerList);
     }
