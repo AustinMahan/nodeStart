@@ -18,6 +18,7 @@ $(document).ready(function(){
 
   //opens a socket and sets it to a variable
   var socket = io();
+
   //when the player recieves data from the server it exicutes the following code
   socket.on('newPositions',function(data){
     //draws the bricks and the background on the page and clears it so imgs don't replicate
@@ -59,19 +60,36 @@ $(document).ready(function(){
         }
       }
       //looks at players health
-      if(i == 0){
-        $('#p1Health').val(data[0].health)
-        if(data[0].health <= 0){
-          $('#player2Wins').fadeIn()
-        }
-      }else if(i == 1){
-        $('#p2Health').val(data[1].health)
-        if(data[1].health <= 0){
-          $('#player1Wins').fadeIn()
-        }
-      }
+      // if(i == 0){
+      //   $('#p1Health').val(data[0].health)
+      // }else if(i == 1){
+      //   $('.player2Header').fadeIn(1)
+      //   $('#p2Health').val(data[1].health)
+      // }else if(i == 2){
+      //   $('.player3Header').fadeIn(1)
+      //   $('#p3Health').val(data[2].health)
+      // }
     }
   });
+
+  socket.on('playerHealth', function(data){
+    var healthArr = Object.keys(data)
+    healthArr.forEach(function(eachPlay, index){
+      // console.log(eachPlay);
+      if(index == 0){
+        $('#p1Health').val(data[eachPlay])
+      }else if(index == 1){
+        $('.player2Header').fadeIn(1)
+        $('#p2Health').val(data[eachPlay])
+      }else if(index == 2){
+        $('.player3Header').fadeIn(1)
+        $('#p3Health').val(data[eachPlay])
+      }else if(index == 3){
+        $('.player4Header').fadeIn(1)
+        $('#p4Health').val(data[eachPlay])
+      }
+    })
+  })
 
   socket.on('lost', function(){
     $('body').empty()

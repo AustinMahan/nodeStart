@@ -115,9 +115,15 @@ io.sockets.on('connection', function(socket){
 //sets the shooting direction to nothing so the player has to give direction
 var shootLeft = null
 var shootRight = null
+var playerHealth = {}
 setInterval(function(){
-  var pack = [];
 
+  var numplayers = Object.keys(playerList)
+  for(var j = 0; j < numplayers.length; j++){
+    playerHealth[numplayers[j]] = playerList[numplayers[j]].health
+  }
+
+  var pack = [];
   //loops through the players connected and changes their position if that socket is giving input
   for(var i in playerList){
     var player = playerList[i];
@@ -227,5 +233,6 @@ setInterval(function(){
     //sends all the information back to each socket every 1/10th of a second
     var socket = SOCKET_LIST[i];
     socket.emit('newPositions',pack);
+    socket.emit('playerHealth', playerHealth)
 	}
 },100);
