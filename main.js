@@ -236,3 +236,7 @@ setInterval(function(){
     socket.emit('playerHealth', playerHealth)
 	}
 },100);
+
+setInterval(function(){
+  playerHealth = {}
+}, 100000)
