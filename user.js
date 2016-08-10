@@ -1,140 +1,121 @@
 $(document).ready(function(){
-var changes = {}
-var gameState = []
+  const ctx = document.getElementById("ctx").getContext("2d");
 
 
-//immediatly grabs and updates using what is on the server
-$.ajax({
-  method: "GET",
-  url: "https://localhost:8888"
-}).done(function(data){
-  gameState = JSON.parse(data).things
-  for(var i = 0; i < 9; i++){
-    changes['change' + (i+1)] = gameState[i]
-    $('.change' + (i+1)).html(gameState[i])
+  var brick = document.getElementById("brickimg");
+  var background = document.getElementById("backgroundimg");
+  var bulletImg = document.getElementById("bulletImg")
+  ctx.drawImage(background, 0, 0, 1100, 500);
+  for(var i = 0; i < 1100; i+=50){
+    let obj = {}
+    obj.x = i
+    obj.y = 550
+    ctx.drawImage(brick, i , 550, 50, 50)
   }
-testForWinner()
-}).fail(function(err){
-  console.log(err);
-})
+  var socket = io();
 
-
-
-
-//makes sure a player is selected
-  var player = ''
-  $('.player').click(function(){
-    console.log($(this).attr('name'));
-    player = $(this).attr('name')
-  })
-//if one of the letters is clicked then it will replace that letter on the server and on the page
-  $('p').click(function(){
-    if(player == ''){
-      console.log('Select Player');
-      return
+  socket.on('newPositions',function(data){
+    ctx.clearRect(0,0,1100,600);
+    ctx.drawImage(background, 0, 0, 1100, 600);
+    for(var i = 0; i < 1100; i+=50){
+      ctx.drawImage(brick, i, 550, 50, 50)
     }
-    var num = $(this).text()
-    var sendData = {}
-    sendData[player] = num
-
-    $.ajax({
-      method: "POST",
-      url: "https://localhost:8888",
-      data: JSON.stringify(sendData)
-    }).done(function(data){
-      gameState = JSON.parse(data).things
-      for(var i = 0; i < 9; i++){
-        changes['change' + (i+1)] = gameState[i]
-        $('.change' + (i+1)).html(gameState[i])
+    for(var i = 250; i < 500; i += 25){
+      ctx.drawImage(brick, i, 400, 25, 25)
+    }
+    for(var i = 650; i < 900; i+=25){
+      ctx.drawImage(brick, i, 250, 25, 25)
+    }
+    for(var i = 850; i < 1100; i += 25){
+      ctx.drawImage(brick, i, 400, 25, 25)
+    }
+    for(var i = 0; i < 175; i+=25){
+      ctx.drawImage(brick, i, 250, 25, 25)
+    }
+    for(var i = 0 ; i < data.length; i++){
+      var xVal = data[i].x
+      var yVal = data[i].y
+      // console.log(data[i].number);
+      if(data[i].number == 0){
+        var image = document.getElementById("ironMan");
+      }else if(data[i].number == 1){
+        var image = document.getElementById('spiderMan')
+      }else if(data[i].number == 2){
+        var image = document.getElementById('thor')
+      }else if(data[i].number == 3){
+        var image = document.getElementById('hulk')
+      }else if(data[i].number == 4){
+        var image = document.getElementById('blackWidow')
+      }else if(data[i].number == 5){
+        var image = document.getElementById('thor')
+      }else if(data[i].number == 6){
+        var image = document.getElementById('spiderMan')
+      }else if(data[i].number == 7){
+        var image = document.getElementById('thor')
+      }else{
+        var image = document.getElementById("ironMan");
       }
 
-      if(testForWinner() != false){
-        var winner = testForWinner()
-        console.log(winner);
-        $.ajax({
-          method: 'POST',
-          url: "https://localhost:8888",
-          data: winner
-        }).done(function(winMesg){
-          $('body').append(`<p class='WinnerMes'> ${winMesg} Wins</p>`)
-        }).fail(function(err){
-          console.log(err);
-        })
+      ctx.drawImage(image, data[i].x, data[i].y, 50,50)
+
+      if(data[i].bullets.length > 0){
+        for(var j = 0; j < data[i].bullets.length; j++){
+          if(data[i].bullets[j].right){
+            ctx.drawImage(bulletImg, data[i].bullets[j].x + 60, data[i].bullets[j].y + 10, 10, 10)
+          }else if(data[i].bullets[j].left){
+            ctx.drawImage(bulletImg, data[i].bullets[j].x - 10, data[i].bullets[j].y + 10, 10, 10)
+          }
+        }
       }
-    }).fail(function(err){
-      console.log(err);
+      if(i == 0){
+        $('#p1Health').val(data[0].health)
+        if(data[0].health <= 0){
+          $('#player1Lost').fadeIn()
+        }
+      }else if(i == 1){
+        $('#p2Health').val(data[1].health)
+      }
+    }
+  });
+
+
+    $('body').keydown(function(event){
+      if(event.which == 87){
+        //up
+        socket.emit('jumpUp')
+      }else if(event.which == 65){
+        //left
+        socket.emit('goLeft')
+      }else if(event.which == 83){
+        //down
+        socket.emit('dropDown')
+      }else if(event.which == 68){
+        //right
+        socket.emit('goRight')
+      }else if(event.which == 32){
+        //shoot
+        socket.emit('pewPew')
+      }
     })
+
+    $('body').keyup(function(event){
+      if(event.which == 87){
+        //up
+        socket.emit('jumpUpStop')
+      }else if(event.which == 65){
+        //left
+        socket.emit('goLeftStop')
+      }else if(event.which == 83){
+        //down
+        socket.emit('dropDownStop')
+      }else if(event.which == 68){
+        //right
+        socket.emit('goRightStop')
+      }else if(event.which == 32){
+        //shoot
+        socket.emit('stopPew')
+      }
+    })
+
+
   })
-
-// looks if any player has 3 in a row
-function testForWinner(){
-  if(changes.change1 == changes.change2 && changes.change2 == changes.change3){
-    if(changes.change1 == 'X'){
-      console.log('player 1 wins');
-      return 'player1'
-    }else{
-      console.log('player 2 wins');
-      return 'player2'
-    }
-  }else if(changes.change4 == changes.change5 && changes.change5 == changes.change6){
-    if(changes.change4 == 'X'){
-      console.log('player 1 wins');
-      return 'player1'
-    }else{
-      console.log('player 2 wins');
-      return 'player2'
-    }
-  }else if(changes.change7 == changes.change8 && changes.change8 == changes.change9){
-    if(changes.change7 == 'X'){
-      console.log('player 1 wins');
-      return 'player1'
-    }else{
-      console.log('player 2 wins');
-      return 'player2'
-    }
-  }else if(changes.change1 == changes.change4 && changes.change4 == changes.change7){
-    if(changes.change1 == 'X'){
-      console.log('player 1 wins');
-      return 'player1'
-    }else{
-      console.log('player 2 wins');
-      return 'player2'
-    }
-  }else if(changes.change2 == changes.change5 && changes.change5 == changes.change8){
-    if(changes.change2 == 'X'){
-      console.log('player 1 wins');
-      return 'player1'
-    }else{
-      console.log('player 2 wins');
-      return 'player2'
-    }
-  }else if(changes.change3 == changes.change6 && changes.change6 == changes.change9){
-    if(changes.change3 == 'X'){
-      console.log('player 1 wins');
-      return 'player1'
-    }else{
-      console.log('player 2 wins');
-      return 'player2'
-    }
-  }else if(changes.change1 == changes.change5 && changes.change5 == changes.change9){
-    if(changes.change1 == 'X'){
-      console.log('player 1 wins');
-      return 'player1'
-    }else{
-      console.log('player 2 wins');
-      return 'player2'
-    }
-  }else if(changes.change3 == changes.change5 && changes.change5 == changes.change7){
-    if(changes.change4 == 'X'){
-      console.log('player 1 wins');
-      return 'player1'
-    }else{
-      console.log('player 2 wins');
-      return 'player2'
-    }
-  }
-  return false;
-}
-
-
-})
