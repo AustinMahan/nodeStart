@@ -201,6 +201,19 @@ setInterval(function(){
         }
       }
     }
+    if(player.health < 0){
+      for(var i in SOCKET_LIST){
+        //sends all the information back to each socket every 1/10th of a second
+        var socket = SOCKET_LIST[i];
+        // console.log(socket);
+        if(i == player.id){
+          socket.emit('lost');
+          delete playerList[player.id];
+          delete SOCKET_LIST[player.id];
+        }
+      }
+      // player.id.emit('lost')
+    }
     // throws all the information into an oject that gets passed back to the user
     pack.push({
       x:player.x,

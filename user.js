@@ -73,6 +73,10 @@ $(document).ready(function(){
     }
   });
 
+  socket.on('lost', function(){
+    $('body').empty()
+    $('body').append('<h1 style="font-size: 70px;"> YOU LOSE!!!</h1>')
+  })
 
     $('body').keydown(function(event){
       if(event.which == 38){
