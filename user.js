@@ -75,16 +75,16 @@ $(document).ready(function(){
 
 
     $('body').keydown(function(event){
-      if(event.which == 87){
+      if(event.which == 38){
         //up
         socket.emit('jumpUp')
-      }else if(event.which == 65){
+      }else if(event.which == 37){
         //left
         socket.emit('goLeft')
       }else if(event.which == 83){
         //down
         socket.emit('dropDown')
-      }else if(event.which == 68){
+      }else if(event.which == 39){
         //right
         socket.emit('goRight')
       }else if(event.which == 32){
@@ -94,16 +94,16 @@ $(document).ready(function(){
     })
 
     $('body').keyup(function(event){
-      if(event.which == 87){
+      if(event.which == 38){
         //up
         socket.emit('jumpUpStop')
-      }else if(event.which == 65){
+      }else if(event.which == 37){
         //left
         socket.emit('goLeftStop')
       }else if(event.which == 83){
         //down
         socket.emit('dropDownStop')
-      }else if(event.which == 68){
+      }else if(event.which == 39){
         //right
         socket.emit('goRightStop')
       }else if(event.which == 32){
