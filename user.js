@@ -1,10 +1,13 @@
 $(document).ready(function(){
+  //sets the canvas to a 2d model
   const ctx = document.getElementById("ctx").getContext("2d");
 
-
+  // sets all imgs to a variable that is called later
   var brick = document.getElementById("brickimg");
   var background = document.getElementById("backgroundimg");
   var bulletImg = document.getElementById("bulletImg")
+
+  //makes the background and draws the bottom floor bricks
   ctx.drawImage(background, 0, 0, 1100, 500);
   for(var i = 0; i < 1100; i+=50){
     let obj = {}
@@ -12,9 +15,12 @@ $(document).ready(function(){
     obj.y = 550
     ctx.drawImage(brick, i , 550, 50, 50)
   }
-  var socket = io();
 
+  //opens a socket and sets it to a variable
+  var socket = io();
+  //when the player recieves data from the server it exicutes the following code
   socket.on('newPositions',function(data){
+    //draws the bricks and the background on the page and clears it so imgs don't replicate
     ctx.clearRect(0,0,1100,600);
     ctx.drawImage(background, 0, 0, 1100, 600);
     for(var i = 0; i < 1100; i+=50){
@@ -32,30 +38,14 @@ $(document).ready(function(){
     for(var i = 0; i < 175; i+=25){
       ctx.drawImage(brick, i, 250, 25, 25)
     }
+
+    // selets the img of the player randomly
     for(var i = 0 ; i < data.length; i++){
       var xVal = data[i].x
       var yVal = data[i].y
-      // console.log(data[i].number);
-      if(data[i].number == 0){
-        var image = document.getElementById("ironMan");
-      }else if(data[i].number == 1){
-        var image = document.getElementById('spiderMan')
-      }else if(data[i].number == 2){
-        var image = document.getElementById('thor')
-      }else if(data[i].number == 3){
-        var image = document.getElementById('hulk')
-      }else if(data[i].number == 4){
-        var image = document.getElementById('blackWidow')
-      }else if(data[i].number == 5){
-        var image = document.getElementById('thor')
-      }else if(data[i].number == 6){
-        var image = document.getElementById('spiderMan')
-      }else if(data[i].number == 7){
-        var image = document.getElementById('thor')
-      }else{
-        var image = document.getElementById("ironMan");
-      }
+      var arrOfPlayers = [document.getElementById("ironMan"), document.getElementById('spiderMan'),document.getElementById('thor'),document.getElementById('hulk'),document.getElementById('blackWidow'),document.getElementById('thor'),document.getElementById('spiderMan')]
 
+      var image = arrOfPlayers[data[i].number]
       ctx.drawImage(image, data[i].x, data[i].y, 50,50)
 
       if(data[i].bullets.length > 0){
@@ -67,13 +57,17 @@ $(document).ready(function(){
           }
         }
       }
+      //looks at players health
       if(i == 0){
         $('#p1Health').val(data[0].health)
         if(data[0].health <= 0){
-          $('#player1Lost').fadeIn()
+          $('#player2Wins').fadeIn()
         }
       }else if(i == 1){
         $('#p2Health').val(data[1].health)
+        if(data[1].health <= 0){
+          $('#player1Wins').fadeIn()
+        }
       }
     }
   });

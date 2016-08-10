@@ -2,17 +2,20 @@ var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
 
+//points the sesrver to the index.html file
 app.get('/',function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 app.use('/',express.static(__dirname + '/'));
-
 serv.listen(2000);
 console.log("Server started.");
 
+
+//lists of the players that are currently connected
 var SOCKET_LIST = {};
 var playerList = {};
 
+//Player constructor
 function Player(playerId){
 	var player = {
     buttonLeft: false,
@@ -24,15 +27,14 @@ function Player(playerId){
 		x:400,
 		y:300,
 		id:playerId,
-		number: Math.floor(Math.random() * 10),
+		number: Math.floor(Math.random() * 6),
     bulletsOnScreen: []
 	}
 	return player
 }
 
 
-var shootLeft = null
-var shootRight = null
+//bullet constructor
 function bullets(x, y, left, right){
   var bullet ={
     x: x,
@@ -43,16 +45,28 @@ function bullets(x, y, left, right){
   return bullet
 }
 
-var io = require('socket.io')(serv,{});
 
+var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket){
   console.log('connected');
+
+  //adds socket to a list so that when the player leaves the charactor is also removed from game
   socket.id = Math.random();
   SOCKET_LIST[socket.id] = socket;
 
-
+  //new player instance is created when player loads
+  //player is given id the same as that socket id so it can only be controlled by that socket
 	var player = new Player(socket.id)
 	playerList[socket.id] = player
+  for(players in playerList){
+    if((playerList[players].id != player.id)){
+      if(player.number == playerList[players].number){
+        console.log(player.number);
+        player.number = Math.floor(Math.random() * 6)
+        console.log(player.number);
+      }
+    }
+  }
 
   socket.on('disconnect',function(){
     console.log('dosconnect');
@@ -60,7 +74,7 @@ io.sockets.on('connection', function(socket){
     delete SOCKET_LIST[socket.id];
   });
 
-
+  //starts movement and shooting when key is down
   socket.on('goLeft', function(){
 		player.buttonLeft = true
     shootLeft = true
@@ -78,6 +92,8 @@ io.sockets.on('connection', function(socket){
     player.shooting = true
   })
 
+
+  //stops movement and shooting when key is up
   socket.on('goLeftStop', function(){
     player.buttonLeft = false
   })
@@ -90,22 +106,20 @@ io.sockets.on('connection', function(socket){
   socket.on('stopPew', function(){
     player.shooting = false
   })
-
-
 });
 
-
-
+//sets the shooting direction to nothing so the player has to give direction
+var shootLeft = null
+var shootRight = null
 setInterval(function(){
   var pack = [];
 
-
-
+  //loops through the players connected and changes their position if that socket is giving input
   for(var i in playerList){
     var player = playerList[i];
-
     player.bulletsOnScreen.forEach(function(currBullet, index){
       if(currBullet.left){
+        // bullet is given different direction and spawn point if it is faceing left
         currBullet.x -= 20
         for(var players in playerList){
           var currPlayer = playerList[players];
@@ -115,6 +129,7 @@ setInterval(function(){
           }
         }
       }else if (currBullet.right) {
+        // bullet is given different direction and spawn point if it is faceing right
         currBullet.x += 20
         for(var players in playerList){
           var currPlayer = playerList[players];
@@ -126,19 +141,19 @@ setInterval(function(){
           }
         }
       }
-
+      // sets out of bounds for the bullets so they don't go forever
       if(currBullet.x > 1100 || currBullet.x < 0){
         player.bulletsOnScreen.splice(index, 1)
       }
     })
-
+    //makes new bullets and gives directions when the user is making input
     if(player.shooting){
       bullet = new bullets(player.x, player.y, shootLeft, shootRight)
       player.bulletsOnScreen.push(bullet)
       // console.log(playerList);
     }
 
-
+    //sets where the player cant move to so they can't float through the bricks on the page
     if(player.buttonLeft && player.x > 10){
       if(!((player.x < 506 && player.x > 220) && (player.y > 354 && player.y < 430))){
         if(!((player.x > 600 && player.x < 906) && (player.y > 210 && player.y < 295))){
@@ -170,7 +185,7 @@ setInterval(function(){
         }
       }
     }
-
+    // constant 'gravity'
     if(player.y < 500){
       if(!((player.x > 210 && player.x < 500) && (player.y > 350 && player.y < 430))){
         if(!((player.x > 600 && player.x < 890) && (player.y > 200 && player.y < 275))){
@@ -182,21 +197,18 @@ setInterval(function(){
         }
       }
     }
-
+    // throws all the information into an oject that gets passed back to the user
     pack.push({
       x:player.x,
       y:player.y,
-      number:player.number,
+      number: player.number,
       health: player.health,
       bullets: player.bulletsOnScreen
     });
   }
   for(var i in SOCKET_LIST){
+    //sends all the information back to each socket every 1/10th of a second
     var socket = SOCKET_LIST[i];
     socket.emit('newPositions',pack);
-    // socket.emit('bulletStuf', bulletsOnScreen)
 	}
-
-
-
 },100);
