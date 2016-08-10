@@ -76,18 +76,21 @@ $(document).ready(function(){
     var healthArr = Object.keys(data)
     healthArr.forEach(function(eachPlay, index){
       // console.log(eachPlay);
-      if(index == 0){
-        $('#p1Health').val(data[eachPlay])
-      }else if(index == 1){
-        $('.player2Header').fadeIn(1)
-        $('#p2Health').val(data[eachPlay])
-      }else if(index == 2){
-        $('.player3Header').fadeIn(1)
-        $('#p3Health').val(data[eachPlay])
-      }else if(index == 3){
-        $('.player4Header').fadeIn(1)
-        $('#p4Health').val(data[eachPlay])
-      }
+      console.log(index);
+      $('.p' + index + 'Health').val(data[eachPlay])
+
+      // if(index == 0){
+      //   $('.p1Health').val(data[eachPlay])
+      // }else if(index == 1){
+      //   $('.player2Header').fadeIn(1)
+      //   $('.p2Health').val(data[eachPlay])
+      // }else if(index == 2){
+      //   $('.player3Header').fadeIn(1)
+      //   $('.p3Health').val(data[eachPlay])
+      // }else if(index == 3){
+      //   $('.player4Header').fadeIn(1)
+      //   $('.p4Health').val(data[eachPlay])
+      // }
     })
   })
 

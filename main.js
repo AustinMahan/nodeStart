@@ -74,6 +74,7 @@ io.sockets.on('connection', function(socket){
 
   socket.on('disconnect',function(){
     console.log('dosconnect');
+    delete playerHealth[socket.id]
 		delete playerList[socket.id];
     delete SOCKET_LIST[socket.id];
   });
@@ -214,6 +215,7 @@ setInterval(function(){
         // console.log(socket);
         if(i == player.id){
           socket.emit('lost');
+          delete playerHealth[player.id]
           delete playerList[player.id];
           delete SOCKET_LIST[player.id];
         }
@@ -236,7 +238,3 @@ setInterval(function(){
     socket.emit('playerHealth', playerHealth)
 	}
 },100);
-
-setInterval(function(){
-  playerHealth = {}
-}, 100000)
