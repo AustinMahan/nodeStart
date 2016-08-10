@@ -1,15 +1,9 @@
-.box{
-  height: 200px;
-  width: 200px;
-  background-color: #ffff99;
+div{
+  margin: 20px;
   float: left;
-  margin: 10px 10px;
-  text-align: center;
-  font-size: 50px;
-  padding: 50px;
 }
 
-.WinnerMes{
-  font-size: 60px;
-  font-weight: bold;
+#ctx{
+  margin-left: auto;
+  margin-right: auto;
 }
