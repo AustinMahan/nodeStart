@@ -18,8 +18,8 @@ var SOCKET_LIST = {};
 var playerList = {};
 
 //Player constructor
-function Player(playerId){
-	var player = {
+function Player(playerId) {
+  var player = {
     buttonLeft: false,
     buttonRight: false,
     buttonUp: false,
@@ -39,8 +39,8 @@ function Player(playerId){
 
 
 //bullet constructor
-function bullets(x, y, left, right){
-  var bullet ={
+function bullets(x, y, left, right) {
+  var bullet = {
     x: x,
     y: y,
     left: left,
@@ -51,7 +51,7 @@ function bullets(x, y, left, right){
 
 
 var io = require('socket.io')(serv,{});
-io.sockets.on('connection', function(socket){
+io.sockets.on('connection', function(socket) {
   console.log('connected');
 
   //adds socket to a list so that when the player leaves the charactor is also removed from game
